@@ -7,6 +7,23 @@ import { useSSO } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 
 export default function Login() {
+  const { startSSOFlow } = useSSO();
+  const router = useRouter();
+
+  const handleGoogleLogin = async () => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({
+        strategy: "oauth_google",
+      });
+      if (setActive && createdSessionId) {
+        setActive({ session: createdSessionId });
+        router.replace("/(tabs)");
+      }
+    } catch (error) {
+      console.log("ERROR IN AUTH", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.brandSection}>
@@ -25,7 +42,11 @@ export default function Login() {
       </View>
 
       <View style={styles.loginSection}>
-        <TouchableOpacity style={styles.googleButton} activeOpacity={0.9}>
+        <TouchableOpacity
+          style={styles.googleButton}
+          onPress={handleGoogleLogin}
+          activeOpacity={0.9}
+        >
           <View style={styles.googleIconContainer}>
             <Ionicons name="logo-google" size={24} color={COLORS.surface} />
           </View>
