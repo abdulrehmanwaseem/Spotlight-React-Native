@@ -1,10 +1,11 @@
 import { Text, View } from "react-native";
-import { styles } from "../../styles/home.styles";
+import { Link } from "expo-router";
 
 export default function Home() {
   return (
-    <View style={styles.container}>
+    <View>
       <Text>Visit Notifications Screen</Text>
+      <Link href={"/notifications"}>Notifications screen </Link>
     </View>
   );
 }
