@@ -1,11 +1,11 @@
-import { COLORS } from "@/constants/theme";
 import "../global.css";
 
 import { tokenCache } from "@/cache";
-import { ClerkProvider } from "@clerk/clerk-expo";
-import { Stack } from "expo-router";
+import { toastConfig } from "@/config/toastConfig";
+import { ClerkLoaded, ClerkProvider } from "@clerk/clerk-expo";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
+import Toast from "react-native-toast-message";
+import InitialLayout from "./components/initialLayout";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
@@ -15,54 +15,17 @@ if (!publishableKey) {
   );
 }
 
-const toastConfig = {
-  /*
-    Overwrite 'success' type,
-    by modifying the existing `BaseToast` component
-  */
-  success: (props: any) => (
-    <BaseToast
-      {...props}
-      style={{ borderLeftColor: COLORS.primary }}
-      text1Style={{
-        fontSize: 15,
-        fontWeight: 500,
-      }}
-      text2Style={{
-        fontSize: 13,
-      }}
-    />
-  ),
-  /*
-    Overwrite 'error' type,
-    by modifying the existing `ErrorToast` component
-  */
-  error: (props: any) => (
-    <ErrorToast
-      {...props}
-      text1Style={{
-        fontSize: 17,
-      }}
-      text2Style={{
-        fontSize: 15,
-      }}
-    />
-  ),
-};
-
 export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
-      <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1 }}>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-            }}
-          />
-          <Toast config={toastConfig} />
-        </SafeAreaView>
-      </SafeAreaProvider>
+      <ClerkLoaded>
+        <SafeAreaProvider>
+          <SafeAreaView style={{ flex: 1 }}>
+            <InitialLayout />
+            <Toast config={toastConfig} />
+          </SafeAreaView>
+        </SafeAreaProvider>
+      </ClerkLoaded>
     </ClerkProvider>
   );
 }
