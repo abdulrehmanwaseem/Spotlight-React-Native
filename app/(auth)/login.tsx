@@ -21,6 +21,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { startSSOFlow } = useSSO();
+
   const router = useRouter();
 
   const handleEmailLogin = async () => {
@@ -56,10 +57,7 @@ export default function Login() {
       Toast.show({
         type: "error",
         text1: "Login Failed",
-        text2:
-          error instanceof Error
-            ? `${error.message}. Please check your internet connection and try again.`
-            : "Unable to sign in with Google. Please try again.",
+        text2: "Please check your internet connection and try again.",
         position: "top",
       });
     } finally {
