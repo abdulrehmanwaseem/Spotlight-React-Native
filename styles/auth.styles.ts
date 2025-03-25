@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   },
   brandSection: {
     alignItems: "center",
-    marginTop: height * 0.12,
+    marginTop: height * 0.07,
   },
   logoContainer: {
     width: 60,
@@ -60,7 +60,8 @@ export const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 24,
     borderRadius: 14,
-    marginBottom: 20,
+
+    marginBottom: 16,
     width: "100%",
     maxWidth: 300,
     shadowColor: "#000",
@@ -72,6 +73,7 @@ export const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 5,
   },
+
   googleIconContainer: {
     width: 24,
     height: 24,

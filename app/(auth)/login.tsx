@@ -37,6 +37,34 @@ export default function Login() {
     }
   };
 
+  const handleGihubLogin = async () => {
+    if (isLoading) return;
+
+    try {
+      setIsLoading(true);
+      const { createdSessionId, setActive } = await startSSOFlow({
+        strategy: "oauth_github",
+      });
+
+      if (!setActive || !createdSessionId) {
+        throw new Error("Failed to get session information");
+      }
+
+      await setActive({ session: createdSessionId });
+
+      log.info("Github login completed successfully");
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Login Failed",
+        text2: "Please check your internet connection and try again.",
+        position: "top",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleGoogleLogin = async () => {
     if (isLoading) return;
 
@@ -97,6 +125,27 @@ export default function Login() {
                 <Ionicons name="logo-google" size={24} color={COLORS.surface} />
               </View>
               <Text style={styles.googleButtonText}>Continue with Google</Text>
+            </>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.googleButton,
+            isLoading && { opacity: 0.7 },
+            { marginBottom: 16 },
+          ]}
+          onPress={handleGihubLogin}
+          activeOpacity={0.9}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator size="small" color={COLORS.surface} />
+          ) : (
+            <>
+              <View style={styles.googleIconContainer}>
+                <Ionicons name="logo-github" size={24} color={COLORS.surface} />
+              </View>
+              <Text style={styles.googleButtonText}>Continue with Github</Text>
             </>
           )}
         </TouchableOpacity>
