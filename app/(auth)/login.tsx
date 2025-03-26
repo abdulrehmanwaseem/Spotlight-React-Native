@@ -1,80 +1,17 @@
 import { COLORS } from "@/constants/theme";
 import { styles } from "@/styles/auth.styles";
 import { useSSO } from "@clerk/clerk-expo";
-import { OAuthStrategy } from "@clerk/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { logger } from "react-native-logs";
 import Toast from "react-native-toast-message";
+import { OAuthButton } from "../../components/auth/OAuthButton";
+import { OAuthProviderConfig, OAuthProviderType } from "@/types/auth";
+import { OAUTH_PROVIDERS } from "@/constants/oauth";
 
 const log = logger.createLogger();
-
-// Type definitions
-type OAuthProviderType = "oauth_google" | "oauth_github";
-
-interface OAuthProviderConfig {
-  strategy: OAuthProviderType;
-  icon: string;
-  text: string;
-}
-
-// Provider configurations
-const OAUTH_PROVIDERS: Record<string, OAuthProviderConfig> = {
-  google: {
-    strategy: "oauth_google",
-    icon: "logo-google",
-    text: "Continue with Google",
-  },
-  github: {
-    strategy: "oauth_github",
-    icon: "logo-github",
-    text: "Continue with Github",
-  },
-} as const;
-
-// OAuth Button Component
-interface OAuthButtonProps {
-  provider: OAuthProviderConfig;
-  isLoading: boolean;
-  onPress: () => void;
-}
-
-const OAuthButton: React.FC<OAuthButtonProps> = ({
-  provider,
-  isLoading,
-  onPress,
-}) => (
-  <TouchableOpacity
-    style={[styles.googleButton, isLoading && { opacity: 0.7 }]}
-    onPress={onPress}
-    activeOpacity={0.9}
-    disabled={isLoading}
-  >
-    {isLoading ? (
-      <ActivityIndicator size="small" color={COLORS.surface} />
-    ) : (
-      <>
-        <View style={styles.googleIconContainer}>
-          <Ionicons
-            name={provider.icon as any}
-            size={24}
-            color={COLORS.surface}
-          />
-        </View>
-        <Text style={styles.googleButtonText}>{provider.text}</Text>
-      </>
-    )}
-  </TouchableOpacity>
-);
 
 export default function Login() {
   const [email, setEmail] = useState("");
