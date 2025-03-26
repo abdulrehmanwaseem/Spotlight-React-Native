@@ -1,6 +1,7 @@
 import { COLORS } from "@/constants/theme";
 import { styles } from "@/styles/auth.styles";
 import { useSSO } from "@clerk/clerk-expo";
+import { OAuthStrategy } from "@clerk/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -17,11 +18,68 @@ import Toast from "react-native-toast-message";
 
 const log = logger.createLogger();
 
+// Type definitions
+type OAuthProviderType = "oauth_google" | "oauth_github";
+
+interface OAuthProviderConfig {
+  strategy: OAuthProviderType;
+  icon: string;
+  text: string;
+}
+
+// Provider configurations
+const OAUTH_PROVIDERS: Record<string, OAuthProviderConfig> = {
+  google: {
+    strategy: "oauth_google",
+    icon: "logo-google",
+    text: "Continue with Google",
+  },
+  github: {
+    strategy: "oauth_github",
+    icon: "logo-github",
+    text: "Continue with Github",
+  },
+} as const;
+
+// OAuth Button Component
+interface OAuthButtonProps {
+  provider: OAuthProviderConfig;
+  isLoading: boolean;
+  onPress: () => void;
+}
+
+const OAuthButton: React.FC<OAuthButtonProps> = ({
+  provider,
+  isLoading,
+  onPress,
+}) => (
+  <TouchableOpacity
+    style={[styles.googleButton, isLoading && { opacity: 0.7 }]}
+    onPress={onPress}
+    activeOpacity={0.9}
+    disabled={isLoading}
+  >
+    {isLoading ? (
+      <ActivityIndicator size="small" color={COLORS.surface} />
+    ) : (
+      <>
+        <View style={styles.googleIconContainer}>
+          <Ionicons
+            name={provider.icon as any}
+            size={24}
+            color={COLORS.surface}
+          />
+        </View>
+        <Text style={styles.googleButtonText}>{provider.text}</Text>
+      </>
+    )}
+  </TouchableOpacity>
+);
+
 export default function Login() {
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<OAuthProviderType | null>(null);
   const { startSSOFlow } = useSSO();
-
   const router = useRouter();
 
   const handleEmailLogin = async () => {
@@ -37,13 +95,21 @@ export default function Login() {
     }
   };
 
-  const handleGihubLogin = async () => {
+  const handleOAuthLogin = async (provider: OAuthProviderConfig) => {
     if (isLoading) return;
 
     try {
-      setIsLoading(true);
+      setIsLoading(provider.strategy);
+      log.info(`Starting ${provider.strategy} SSO flow`);
+
       const { createdSessionId, setActive } = await startSSOFlow({
-        strategy: "oauth_github",
+        strategy: provider.strategy,
+      });
+
+      log.info(`${provider.strategy} SSO response:`, {
+        hasSessionId: !!createdSessionId,
+        hasSetActive: !!setActive,
+        timestamp: new Date().toISOString(),
       });
 
       if (!setActive || !createdSessionId) {
@@ -51,9 +117,9 @@ export default function Login() {
       }
 
       await setActive({ session: createdSessionId });
-
-      log.info("Github login completed successfully");
+      log.info(`${provider.strategy} login completed successfully`);
     } catch (error) {
+      log.error(`${provider.strategy} login error:`, error);
       Toast.show({
         type: "error",
         text1: "Login Failed",
@@ -61,35 +127,7 @@ export default function Login() {
         position: "top",
       });
     } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    if (isLoading) return;
-
-    try {
-      setIsLoading(true);
-      const { createdSessionId, setActive } = await startSSOFlow({
-        strategy: "oauth_google",
-      });
-
-      if (!setActive || !createdSessionId) {
-        throw new Error("Failed to get session information");
-      }
-
-      await setActive({ session: createdSessionId });
-
-      log.info("Google login completed successfully");
-    } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Login Failed",
-        text2: "Please check your internet connection and try again.",
-        position: "top",
-      });
-    } finally {
-      setIsLoading(false);
+      setIsLoading(null);
     }
   };
 
@@ -111,44 +149,16 @@ export default function Login() {
       </View>
 
       <View style={styles.loginSection}>
-        <TouchableOpacity
-          style={[styles.googleButton, isLoading && { opacity: 0.7 }]}
-          onPress={handleGoogleLogin}
-          activeOpacity={0.9}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator size="small" color={COLORS.surface} />
-          ) : (
-            <>
-              <View style={styles.googleIconContainer}>
-                <Ionicons name="logo-google" size={24} color={COLORS.surface} />
-              </View>
-              <Text style={styles.googleButtonText}>Continue with Google</Text>
-            </>
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.googleButton,
-            isLoading && { opacity: 0.7 },
-            { marginBottom: 16 },
-          ]}
-          onPress={handleGihubLogin}
-          activeOpacity={0.9}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator size="small" color={COLORS.surface} />
-          ) : (
-            <>
-              <View style={styles.googleIconContainer}>
-                <Ionicons name="logo-github" size={24} color={COLORS.surface} />
-              </View>
-              <Text style={styles.googleButtonText}>Continue with Github</Text>
-            </>
-          )}
-        </TouchableOpacity>
+        <OAuthButton
+          provider={OAUTH_PROVIDERS.google}
+          isLoading={isLoading === "oauth_google"}
+          onPress={() => handleOAuthLogin(OAUTH_PROVIDERS.google)}
+        />
+        <OAuthButton
+          provider={OAUTH_PROVIDERS.github}
+          isLoading={isLoading === "oauth_github"}
+          onPress={() => handleOAuthLogin(OAUTH_PROVIDERS.github)}
+        />
         <Text className="text-sm text-gray-400 text-md">OR</Text>
         <View className="w-full max-w-[300px] my-5">
           <View className="flex-row items-center bg-white rounded-[14px] px-4 h-16 shadow-md">
