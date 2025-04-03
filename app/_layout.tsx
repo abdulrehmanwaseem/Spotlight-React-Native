@@ -10,7 +10,7 @@ export default function RootLayout() {
   return (
     <ClerkAndConvexProvider>
       <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
           <InitialLayout />
           <Toast config={toastConfig} />
         </SafeAreaView>
