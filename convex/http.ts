@@ -1,14 +1,14 @@
 import { httpRouter } from "convex/server";
-import { httpAction } from "./_generated/server";
 import { Webhook } from "svix";
 import { api } from "./_generated/api";
+import { httpAction } from "./_generated/server";
 
 const http = httpRouter();
 
 http.route({
-  path: "/clerk-user-webhook",
+  path: "/clerk-auth-webhook",
   method: "POST",
-  handler: httpAction(async (ctx, req) => {
+  handler: httpAction(async (ctx, request) => {
     const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
@@ -16,9 +16,9 @@ http.route({
     }
 
     // check headers
-    const svix_id = req.headers.get("svix-id");
-    const svix_signature = req.headers.get("svix-signature");
-    const svix_timestamp = req.headers.get("svix-timestamp");
+    const svix_id = request.headers.get("svix-id");
+    const svix_signature = request.headers.get("svix-signature");
+    const svix_timestamp = request.headers.get("svix-timestamp");
 
     if (!svix_id || !svix_signature || !svix_timestamp) {
       return new Response("Error occured, no svix headers found", {
@@ -26,7 +26,7 @@ http.route({
       });
     }
 
-    const payload = req.json();
+    const payload = await request.json();
     const body = JSON.stringify(payload);
 
     const wh = new Webhook(webhookSecret);
@@ -73,7 +73,8 @@ http.route({
       return new Response("Webhook processed successfully", { status: 200 });
     }
 
-    // Default response for unhandled event types
     return new Response("Event type not handled", { status: 200 });
   }),
 });
+
+export default http;
