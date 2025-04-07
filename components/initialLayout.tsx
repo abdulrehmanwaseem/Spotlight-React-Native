@@ -1,3 +1,4 @@
+import { COLORS } from "@/constants/theme";
 import { useAuth } from "@clerk/clerk-expo";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
@@ -21,5 +22,12 @@ export default function InitialLayout() {
 
   if (!isLoaded) return null;
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        navigationBarColor: COLORS.surface,
+      }}
+    />
+  );
 }

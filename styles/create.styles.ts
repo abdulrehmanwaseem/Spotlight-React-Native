@@ -19,19 +19,22 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 0.5,
     borderBottomColor: COLORS.surface,
+    height: 56,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "600",
     color: COLORS.white,
+    flex: 1,
+    textAlign: "center",
   },
   contentDisabled: {
     opacity: 0.7,
   },
   shareButton: {
-    paddingHorizontal: 12,
+    paddingLeft: 20,
     paddingVertical: 6,
-    minWidth: 60,
+    minWidth: 65,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -50,7 +53,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 12,
+    gap: 10,
   },
   emptyImageText: {
     color: COLORS.grey,

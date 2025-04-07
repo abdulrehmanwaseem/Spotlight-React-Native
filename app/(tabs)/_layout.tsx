@@ -11,12 +11,15 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.grey,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           elevation: 0,
           borderTopWidth: 0,
+          backgroundColor: COLORS.surface,
           position: "absolute",
           height: 55,
           paddingBottom: 0,
+          paddingTop: 2,
         },
       }}
     >
