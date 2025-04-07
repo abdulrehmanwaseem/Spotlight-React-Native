@@ -30,7 +30,16 @@ export default function Index() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 50 }}
       >
-        {/* Stories */}
+        {posts.map((post) => (
+          <Post key={post._id} post={post} />
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
+
+{
+  /* Stories
         <ScrollView
           horizontal
           style={styles.storiesContainer}
@@ -39,14 +48,7 @@ export default function Index() {
           {STORIES.map((val) => (
             <Story key={val.id} story={val} />
           ))}
-        </ScrollView>
-
-        {posts.map((post) => (
-          <Post key={post._id} post={post} />
-        ))}
-      </ScrollView>
-    </View>
-  );
+        </ScrollView> */
 }
 
 const NoPostsFound = () => (
