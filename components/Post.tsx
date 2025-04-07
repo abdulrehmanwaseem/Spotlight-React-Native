@@ -5,9 +5,25 @@ import { Link } from "expo-router";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
+import { Id } from "@/convex/_generated/dataModel";
 
 // todo: Will add types later
-export default function Post({ post }: { post: any }) {
+type PostProps = {
+  _id: Id<"posts">;
+  imageUrl: string;
+  caption?: string | undefined;
+  likes: number;
+  comments: number;
+  _creationTime: number;
+  isLiked: boolean;
+  isBookmark: boolean;
+  author: {
+    _id: string;
+    username: string;
+    image: string;
+  };
+};
+export default function Post({ post }: { post: PostProps }) {
   return (
     <View style={styles.post}>
       <View style={styles.postHeader}>
