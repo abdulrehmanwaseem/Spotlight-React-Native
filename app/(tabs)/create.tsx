@@ -87,6 +87,8 @@ export default function Create() {
         visibilityTime: 4000,
       });
     } finally {
+      setSelectedImage(null);
+      setCaption("");
       setIsSharing(false);
     }
   };

@@ -64,7 +64,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 12,
+    padding: 14,
   },
   postHeaderLeft: {
     flexDirection: "row",
