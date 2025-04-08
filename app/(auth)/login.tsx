@@ -1,15 +1,15 @@
+import { OAUTH_PROVIDERS } from "@/constants/oauth";
 import { COLORS } from "@/constants/theme";
 import { styles } from "@/styles/auth.styles";
+import { OAuthProviderConfig, OAuthProviderType } from "@/types/auth";
 import { useSSO } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, Text, TextInput, View } from "react-native";
 import { logger } from "react-native-logs";
 import Toast from "react-native-toast-message";
 import { OAuthButton } from "../../components/auth/OAuthButton";
-import { OAuthProviderConfig, OAuthProviderType } from "@/types/auth";
-import { OAUTH_PROVIDERS } from "@/constants/oauth";
 
 const log = logger.createLogger();
 
@@ -17,7 +17,6 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState<OAuthProviderType | null>(null);
   const { startSSOFlow } = useSSO();
-  const router = useRouter();
 
   const handleEmailLogin = async () => {
     try {

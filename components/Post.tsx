@@ -51,6 +51,7 @@ export default function Post({ post }: { post: PostProps }) {
               style={styles.postAvatar}
               contentFit="cover"
               transition={200}
+              priority="high"
               cachePolicy={"memory-disk"}
             />
             <Text style={styles.postUsername}>{post.author.username}</Text>

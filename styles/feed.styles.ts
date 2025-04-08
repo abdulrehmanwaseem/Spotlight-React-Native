@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     borderBottomColor: COLORS.surface,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 25,
     fontFamily: "JetBrainsMono-Medium",
     color: COLORS.primary,
   },
