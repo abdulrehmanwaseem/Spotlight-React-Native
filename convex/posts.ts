@@ -134,41 +134,30 @@ export const deletePost = mutation({
     if (post.userId !== currentUser._id)
       throw new Error("Not authorized to delete this post");
 
-    // Delete associated likes
-    const likes = await ctx.db
-      .query("likes")
-      .withIndex("by_post", (q) => q.eq("postId", args.postId))
-      .collect();
+    // Collect all related entities
+    const [likes, comments, bookmarks] = await Promise.all([
+      ctx.db
+        .query("likes")
+        .withIndex("by_post", (q) => q.eq("postId", args.postId))
+        .collect(),
+      ctx.db
+        .query("comments")
+        .withIndex("by_post", (q) => q.eq("postId", args.postId))
+        .collect(),
+      ctx.db
+        .query("bookmarks")
+        .withIndex("by_post", (q) => q.eq("postId", args.postId))
+        .collect(),
+    ]);
 
-    for (const like of likes) {
-      await ctx.db.delete(like._id);
-    }
-
-    // Delete associated comments
-    const comments = await ctx.db
-      .query("comments")
-      .withIndex("by_post", (q) => q.eq("postId", args.postId))
-      .collect();
-
-    for (const comment of comments) {
-      await ctx.db.delete(comment._id);
-    }
-
-    // Delete associated bookmarks
-    const bookmarks = await ctx.db
-      .query("bookmarks")
-      .withIndex("by_post", (q) => q.eq("postId", args.postId))
-      .collect();
-
-    for (const bookmark of bookmarks) {
-      await ctx.db.delete(bookmark._id);
-    }
-
-    // Delete the storage file
-    await ctx.storage.delete(post.storageId);
-
-    // Delete the post
-    await ctx.db.delete(args.postId);
+    // Delete all related entities in parallel
+    await Promise.all([
+      ...likes.map((like) => ctx.db.delete(like._id)),
+      ...comments.map((comment) => ctx.db.delete(comment._id)),
+      ...bookmarks.map((bookmark) => ctx.db.delete(bookmark._id)),
+      ctx.storage.delete(post.storageId),
+      ctx.db.delete(args.postId),
+    ]);
 
     // Decrement user's post count by 1
     await ctx.db.patch(currentUser._id, {
