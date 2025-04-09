@@ -9,6 +9,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import CommentsModal from "./CommentsModal";
+import { formatDistance, formatDistanceToNow } from "date-fns";
 
 // todo: Will add types later
 type PostProps = {
@@ -29,18 +30,42 @@ type PostProps = {
 export default function Post({ post }: { post: PostProps }) {
   const [isLiked, setIsLiked] = useState(post.isLiked);
   const [likesCount, setLikesCount] = useState(post.likes);
-  const [showComment, setShowComment] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const [commentsCount, setCommentsCount] = useState(post.comments);
+  const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
 
   const toggleLike = useMutation(api.posts.toggleLike);
+  const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
 
   const handleLike = async () => {
     try {
+      setIsLiked(!isLiked);
+      setLikesCount((prev) => (!isLiked ? prev + 1 : prev - 1));
+
       const likeStatus = await toggleLike({ postId: post._id });
-      setIsLiked(likeStatus);
-      setLikesCount((prev) => (likeStatus ? prev + 1 : prev - 1));
+
+      if (likeStatus !== !isLiked) {
+        setIsLiked(isLiked);
+        setLikesCount((prev) => (isLiked ? prev + 1 : prev - 1));
+      }
     } catch (error) {
+      setIsLiked(isLiked);
+      setLikesCount((prev) => (isLiked ? prev + 1 : prev - 1));
       console.error("Error toggling like:", error);
+    }
+  };
+
+  const handleBookmark = async () => {
+    try {
+      setIsBookmarked(!isBookmarked);
+      const bookmarkStatus = await toggleBookmark({ postId: post._id });
+
+      if (bookmarkStatus !== !isBookmarked) {
+        setIsBookmarked(isBookmarked);
+      }
+    } catch (error) {
+      setIsBookmarked(isBookmarked);
+      console.error("Error toggling bookmark:", error);
     }
   };
 
@@ -86,7 +111,7 @@ export default function Post({ post }: { post: PostProps }) {
               color={isLiked ? COLORS.primary : COLORS.white}
             />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setShowComments(true)}>
             <Ionicons
               name="chatbubble-outline"
               size={22}
@@ -94,8 +119,12 @@ export default function Post({ post }: { post: PostProps }) {
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity>
-          <Ionicons name={"bookmark-outline"} size={22} color={COLORS.white} />
+        <TouchableOpacity onPress={handleBookmark}>
+          <Ionicons
+            name={isBookmarked ? "bookmark" : "bookmark-outline"}
+            size={22}
+            color={COLORS.white}
+          />
         </TouchableOpacity>
       </View>
 
@@ -113,17 +142,21 @@ export default function Post({ post }: { post: PostProps }) {
           </View>
         )}
 
-        <TouchableOpacity>
-          <Text style={styles.commentsText}>View all 2 comments</Text>
+        <TouchableOpacity onPress={() => setShowComments(true)}>
+          <Text style={styles.commentsText}>
+            View all {commentsCount} comments
+          </Text>
         </TouchableOpacity>
 
-        <Text style={styles.timeAgo}>2 hours ago</Text>
+        <Text style={styles.timeAgo}>
+          {formatDistanceToNow(post._creationTime, { addSuffix: true })}
+        </Text>
       </View>
 
       <CommentsModal
         postId={post._id}
-        visible={showComment}
-        onClose={() => setShowComment(false)}
+        visible={showComments}
+        onClose={() => setShowComments(false)}
         onCommentAdded={() => setCommentsCount((prev) => prev + 1)}
       />
     </View>
