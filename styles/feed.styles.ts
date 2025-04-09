@@ -133,18 +133,19 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
   },
   modalContainer: {
-    backgroundColor: COLORS.background,
-    marginBottom: Platform.OS === "ios" ? 44 : 0,
     flex: 1,
-    marginTop: Platform.OS === "ios" ? 44 : 0,
+    backgroundColor: COLORS.background,
+  },
+  modalContent: {
+    flex: 1,
   },
   modalHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    height: 56,
-    borderBottomWidth: 0.5,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
     borderBottomColor: COLORS.surface,
   },
   modalTitle: {
@@ -152,8 +153,11 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-  commentsList: {
+  commentsContainer: {
     flex: 1,
+  },
+  commentsList: {
+    flexGrow: 1,
   },
   commentContainer: {
     flexDirection: "row",
@@ -191,14 +195,14 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderTopWidth: 0.5,
+    borderTopWidth: 1,
     borderTopColor: COLORS.surface,
     backgroundColor: COLORS.background,
   },
   input: {
     flex: 1,
     color: COLORS.white,
-    paddingVertical: 8,
+    paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 12,
     backgroundColor: COLORS.surface,
@@ -208,10 +212,15 @@ export const styles = StyleSheet.create({
   postButton: {
     color: COLORS.primary,
     fontWeight: "600",
-    fontSize: 14,
+    fontSize: 16,
   },
   postButtonDisabled: {
-    opacity: 0.5,
+    color: COLORS.grey,
+  },
+  postButtonContainer: {
+    width: 40,
+    alignItems: "center",
+    justifyContent: "center",
   },
   centered: {
     justifyContent: "center",

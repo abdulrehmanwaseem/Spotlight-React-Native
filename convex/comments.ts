@@ -40,14 +40,19 @@ export const getComments = query({
       .withIndex("by_post", (q) => q.eq("postId", args.postId))
       .collect();
 
-    const commentsWithDetails = comments.map((comment) => {
-      const author = ctx.db.get(comment.userId);
-      return {
-        ...comment,
-        author,
-      };
-    });
+    const commentsWithDetails = await Promise.all(
+      comments.map(async (comment) => {
+        const user = await ctx.db.get(comment.userId);
+        return {
+          ...comment,
+          user: {
+            fullname: user?.fullName || "Unknown",
+            image: user?.image || "no avatar",
+          },
+        };
+      })
+    );
 
-    return null;
+    return commentsWithDetails;
   },
 });
