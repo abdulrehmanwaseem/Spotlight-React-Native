@@ -44,6 +44,7 @@ export default function Post({
 
   const toggleLike = useMutation(api.posts.toggleLike);
   const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
+  const deletePost = useMutation(api.posts.deletePost);
 
   const { user } = useUser();
 
@@ -86,6 +87,13 @@ export default function Post({
     }
   };
 
+  const handleDeletePost = async () => {
+    try {
+      await deletePost({ postId: post._id });
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
   return (
     <View style={styles.post}>
       <View style={styles.postHeader}>
@@ -103,7 +111,7 @@ export default function Post({
           </TouchableOpacity>
         </Link>
 
-        <PostActions isPostOwner={isPostOwner} />
+        <PostActions isPostOwner={isPostOwner} onDelete={handleDeletePost} />
       </View>
       <Image
         source={post.imageUrl}

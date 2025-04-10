@@ -37,6 +37,7 @@ export default function PostActions({ isPostOwner, onEdit, onDelete }: any) {
             <TouchableOpacity
               onPress={() => {
                 setShowPopover(false);
+                onDelete();
               }}
               style={styles.button}
             >
