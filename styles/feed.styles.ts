@@ -190,6 +190,15 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+  },
+  buttonText: {
+    marginLeft: 10,
+    color: COLORS.primary,
+  },
   commentInput: {
     flexDirection: "row",
     alignItems: "center",

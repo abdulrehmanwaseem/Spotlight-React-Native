@@ -1,15 +1,17 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
-import { styles } from "@/styles/feed.styles";
-import { Link } from "expo-router";
-import { Image } from "expo-image";
-import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
-import { Id } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { styles } from "@/styles/feed.styles";
+import { useUser } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import { useMutation, useQuery } from "convex/react";
+import { formatDistanceToNow } from "date-fns";
+import { Image } from "expo-image";
+import { Link } from "expo-router";
+import React, { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import CommentsModal from "./CommentsModal";
-import { formatDistance, formatDistanceToNow } from "date-fns";
+import PostActions from "./PostActions";
 
 // todo: Will add types later
 type PostProps = {
@@ -27,7 +29,13 @@ type PostProps = {
     image: string | undefined;
   };
 };
-export default function Post({ post }: { post: PostProps }) {
+export default function Post({
+  post,
+}: {
+  post: PostProps;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
   const [isLiked, setIsLiked] = useState(post.isLiked);
   const [likesCount, setLikesCount] = useState(post.likes);
   const [showComments, setShowComments] = useState(false);
@@ -36,6 +44,15 @@ export default function Post({ post }: { post: PostProps }) {
 
   const toggleLike = useMutation(api.posts.toggleLike);
   const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
+
+  const { user } = useUser();
+
+  const dbUser = useQuery(
+    api.users.getUserByClerkId,
+    user ? { clerkId: user?.id } : "skip"
+  );
+
+  const isPostOwner = post.author._id === dbUser?._id;
 
   const handleLike = async () => {
     try {
@@ -86,13 +103,7 @@ export default function Post({ post }: { post: PostProps }) {
           </TouchableOpacity>
         </Link>
 
-        <TouchableOpacity>
-          <Ionicons name="ellipsis-horizontal" size={20} color={COLORS.white} />
-        </TouchableOpacity>
-
-        {/* <TouchableOpacity>
-          <Ionicons name="trash-outline" size={20} color={COLORS.primary} />
-        </TouchableOpacity> */}
+        <PostActions isPostOwner={isPostOwner} />
       </View>
       <Image
         source={post.imageUrl}
