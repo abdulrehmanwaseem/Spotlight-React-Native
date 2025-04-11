@@ -1,14 +1,11 @@
-import { View, Text, ScrollView } from "react-native";
-import React from "react";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import Loader from "@/components/Loader";
-import { COLORS } from "@/constants/theme";
-import { styles } from "@/styles/feed.styles";
-import { Image } from "expo-image";
-import Post from "@/components/Post";
-import { Ionicons } from "@expo/vector-icons";
 import NoDataFound from "@/components/NoDataFound";
+import { api } from "@/convex/_generated/api";
+import { styles } from "@/styles/feed.styles";
+import { useQuery } from "convex/react";
+import { Image } from "expo-image";
+import React from "react";
+import { ScrollView, Text, View } from "react-native";
 
 export default function Bookmarks() {
   const bookmarkedPosts = useQuery(api.bookmarks.getBookmarkedPosts);
@@ -20,7 +17,7 @@ export default function Bookmarks() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Bookmarks</Text>{" "}
+        <Text style={styles.headerTitle}>Bookmarks</Text>
       </View>
 
       <ScrollView
