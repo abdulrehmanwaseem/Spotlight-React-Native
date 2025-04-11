@@ -31,7 +31,7 @@ export const toggleBookmark = mutation({
   },
 });
 
-export const getFeedPosts = query({
+export const getBookmarkedPosts = query({
   handler: async (ctx) => {
     const currentUser = await getAuthenticatedUser(ctx);
 
@@ -43,7 +43,7 @@ export const getFeedPosts = query({
 
     const bookmarksWithDetails = await Promise.all(
       bookmarks.map(async (bookmark) => {
-        const post = await ctx.db.get(bookmark.userId);
+        const post = await ctx.db.get(bookmark.postId);
 
         return post;
       })
