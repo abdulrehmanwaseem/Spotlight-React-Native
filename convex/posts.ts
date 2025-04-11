@@ -134,7 +134,7 @@ export const deletePost = mutation({
       throw new Error("Not authorized to delete this post");
 
     // Collect all related entities
-    const [likes, comments, bookmarks] = await Promise.all([
+    const [likes, comments, bookmarks, notifications] = await Promise.all([
       ctx.db
         .query("likes")
         .withIndex("by_post", (q) => q.eq("postId", args.postId))
@@ -147,6 +147,10 @@ export const deletePost = mutation({
         .query("bookmarks")
         .withIndex("by_post", (q) => q.eq("postId", args.postId))
         .collect(),
+      ctx.db
+        .query("notifications")
+        .withIndex("by_post", (q) => q.eq("postId", args.postId))
+        .collect(),
     ]);
 
     // Delete all related entities in parallel
@@ -154,6 +158,7 @@ export const deletePost = mutation({
       ...likes.map((like) => ctx.db.delete(like._id)),
       ...comments.map((comment) => ctx.db.delete(comment._id)),
       ...bookmarks.map((bookmark) => ctx.db.delete(bookmark._id)),
+      ...notifications.map((notification) => ctx.db.delete(notification._id)),
       ctx.storage.delete(post.storageId),
       ctx.db.delete(args.postId),
     ]);
