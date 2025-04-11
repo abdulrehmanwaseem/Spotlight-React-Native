@@ -29,13 +29,7 @@ type PostProps = {
     image: string | undefined;
   };
 };
-export default function Post({
-  post,
-}: {
-  post: PostProps;
-  onEdit: () => void;
-  onDelete: () => void;
-}) {
+export default function Post({ post }: { post: PostProps }) {
   const [isLiked, setIsLiked] = useState(post.isLiked);
   const [likesCount, setLikesCount] = useState(post.likes);
   const [showComments, setShowComments] = useState(false);
