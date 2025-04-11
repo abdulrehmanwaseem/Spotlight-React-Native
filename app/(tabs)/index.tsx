@@ -8,14 +8,22 @@ import { styles } from "@/styles/feed.styles";
 import { useAuth } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "convex/react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+  ScrollView,
+} from "react-native";
+import NoDataFound from "@/components/NoDataFound";
 
 export default function Index() {
   const { signOut } = useAuth();
   const posts = useQuery(api.posts.getFeedPosts);
 
   if (posts === undefined) return <Loader />;
-  if (!posts.length) return <NoPostsFound />;
+  if (!posts.length)
+    return <NoDataFound icon="home-outline" title="No posts yet" />;
 
   return (
     <View style={styles.container}>
@@ -55,16 +63,3 @@ const StoriesSection = () => {
     />
   );
 };
-
-const NoPostsFound = () => (
-  <View
-    style={{
-      flex: 1,
-      backgroundColor: COLORS.background,
-      justifyContent: "center",
-      alignItems: "center",
-    }}
-  >
-    <Text style={{ fontSize: 20, color: COLORS.primary }}>No posts yet</Text>
-  </View>
-);

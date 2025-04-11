@@ -49,6 +49,10 @@ export const styles = StyleSheet.create({
   shareTextDisabled: {
     color: COLORS.grey,
   },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   emptyImageContainer: {
     flex: 1,
     justifyContent: "center",

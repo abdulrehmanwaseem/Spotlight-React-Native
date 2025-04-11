@@ -7,12 +7,15 @@ import { COLORS } from "@/constants/theme";
 import { styles } from "@/styles/feed.styles";
 import { Image } from "expo-image";
 import Post from "@/components/Post";
+import { Ionicons } from "@expo/vector-icons";
+import NoDataFound from "@/components/NoDataFound";
 
 export default function Bookmarks() {
   const bookmarkedPosts = useQuery(api.bookmarks.getBookmarkedPosts);
 
   if (bookmarkedPosts === undefined) return <Loader />;
-  if (!bookmarkedPosts.length) return <NoBookmarksFound />;
+  if (!bookmarkedPosts.length)
+    return <NoDataFound icon="bookmark-outline" title="No bookmarks yet" />;
 
   return (
     <View style={styles.container}>
@@ -43,22 +46,6 @@ export default function Bookmarks() {
           );
         })}
       </ScrollView>
-    </View>
-  );
-}
-function NoBookmarksFound() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: COLORS.background,
-      }}
-    >
-      <Text style={{ color: COLORS.primary, fontSize: 22 }}>
-        No bookmarked posts yet
-      </Text>
     </View>
   );
 }
