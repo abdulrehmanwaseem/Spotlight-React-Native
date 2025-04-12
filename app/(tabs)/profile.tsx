@@ -11,7 +11,7 @@ import {
   Keyboard,
   Modal,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-expo";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -31,11 +31,20 @@ export default function Profile() {
     api.users.getUserByClerkId,
     userId ? { clerkId: userId } : "skip"
   );
-  console.log(currentUser);
+
   const [editedProfile, setEditedProfile] = useState({
-    fullName: currentUser?.fullName || "",
-    bio: currentUser?.bio || "",
+    fullName: "",
+    bio: "",
   });
+
+  useEffect(() => {
+    if (currentUser) {
+      setEditedProfile({
+        fullName: currentUser.fullName || "",
+        bio: currentUser.bio || "",
+      });
+    }
+  }, [currentUser]);
 
   const [selectedPost, setSelectedPost] = useState<Doc<"posts"> | null>(null);
   const posts = useQuery(api.posts.getPostsByUserId, {});
