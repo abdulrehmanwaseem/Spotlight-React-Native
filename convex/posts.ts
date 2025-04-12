@@ -170,7 +170,7 @@ export const deletePost = mutation({
   },
 });
 
-export const getPostByUserId = query({
+export const getPostsByUserId = query({
   args: { userId: v.optional(v.id("users")) },
   async handler(ctx, args) {
     const user = args.userId

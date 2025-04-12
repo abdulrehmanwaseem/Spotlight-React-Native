@@ -71,6 +71,7 @@ export const updateUser = mutation({
 
     await ctx.db.patch(currentUser._id, {
       fullName: args.fullName,
+
       bio: args.bio,
     });
   },
