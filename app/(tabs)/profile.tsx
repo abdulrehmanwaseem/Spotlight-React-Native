@@ -22,7 +22,7 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import NoDataFound from "@/components/NoDataFound";
-import SelectedImageModal from "@/components/SelectedImageModal";
+import SelectedPostModal from "@/components/SelectedPostModal";
 
 export default function Profile() {
   const { signOut, userId } = useAuth();
@@ -46,7 +46,7 @@ export default function Profile() {
     }
   }, [currentUser]);
 
-  const [selectedPost, setSelectedPost] = useState<Doc<"posts"> | null>(null);
+  const [selectedPost, setSelectedPost] = useState<string | null>(null);
   const posts = useQuery(api.posts.getPostsByUserId, {});
 
   const updateProfile = useMutation(api.users.updateUser);
@@ -147,7 +147,7 @@ export default function Profile() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.gridItem}
-              onPress={() => setSelectedPost(item)}
+              onPress={() => setSelectedPost(item?.imageUrl)}
             >
               <Image
                 source={item.imageUrl}
@@ -160,7 +160,7 @@ export default function Profile() {
         />
       </ScrollView>
 
-      <SelectedImageModal
+      <SelectedPostModal
         selectedPost={selectedPost}
         setSelectedPost={setSelectedPost}
       />

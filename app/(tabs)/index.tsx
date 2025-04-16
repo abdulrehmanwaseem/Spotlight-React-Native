@@ -14,13 +14,22 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  RefreshControl,
 } from "react-native";
 import NoDataFound from "@/components/NoDataFound";
-
+import { useState } from "react";
 export default function Index() {
   const { signOut } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+
   const posts = useQuery(api.posts.getFeedPosts);
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  };
   if (posts === undefined) return <Loader />;
   if (!posts.length)
     return <NoDataFound icon="home-outline" title="No posts yet" />;
@@ -42,6 +51,13 @@ export default function Index() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 50 }}
         ListHeaderComponent={<StoriesSection />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={COLORS.primary}
+          />
+        }
       />
     </View>
   );

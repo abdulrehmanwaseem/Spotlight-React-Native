@@ -74,7 +74,7 @@ export default function Login() {
           <Ionicons name="leaf" size={32} color={COLORS.primary} />
         </View>
         <Text style={styles.appName}>SpotLight</Text>
-        <Text style={styles.tagline}>don't miss anything</Text>
+        <Text style={styles.tagline}>don't miss anything {""}</Text>
       </View>
       <View style={styles.illustrationContainer}>
         <Image
@@ -95,7 +95,7 @@ export default function Login() {
           isLoading={isLoading === "oauth_github"}
           onPress={() => handleOAuthLogin(OAUTH_PROVIDERS.github)}
         />
-        <Text className="text-sm text-gray-400 text-md">OR</Text>
+        <Text style={{ fontSize: 14, color: COLORS.grey }}>OR {""}</Text>
         <View className="w-full max-w-[300px] my-5">
           <View className="flex-row items-center bg-white rounded-[14px] px-4 h-16 shadow-md">
             <Ionicons

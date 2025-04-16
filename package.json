@@ -1,7 +1,8 @@
 {
-  "name": "spotlight-react-native",
+  "name": "spotlight-app",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "description": "SpotLight - A social media app built with React Native and Expo",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -54,7 +55,8 @@
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
     "svix": "^1.63.0",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "expo-navigation-bar": "~4.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -66,5 +68,7 @@
     "react-test-renderer": "18.3.1",
     "typescript": "^5.3.3"
   },
-  "private": true
+  "private": true,
+  "author": "Abdul Rehman",
+  "license": "MIT"
 }
