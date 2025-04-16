@@ -31,9 +31,7 @@ type PostProps = {
 };
 export default function Post({ post }: { post: PostProps }) {
   const [isLiked, setIsLiked] = useState(post.isLiked);
-  const [likesCount, setLikesCount] = useState(post.likes);
   const [showComments, setShowComments] = useState(false);
-  const [commentsCount, setCommentsCount] = useState(post.comments);
   const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
 
   const toggleLike = useMutation(api.posts.toggleLike);
@@ -52,17 +50,14 @@ export default function Post({ post }: { post: PostProps }) {
   const handleLike = async () => {
     try {
       setIsLiked(!isLiked);
-      setLikesCount((prev) => (!isLiked ? prev + 1 : prev - 1));
 
       const likeStatus = await toggleLike({ postId: post._id });
 
       if (likeStatus !== !isLiked) {
         setIsLiked(isLiked);
-        setLikesCount((prev) => (isLiked ? prev + 1 : prev - 1));
       }
     } catch (error) {
       setIsLiked(isLiked);
-      setLikesCount((prev) => (isLiked ? prev + 1 : prev - 1));
       console.error("Error toggling like:", error);
     }
   };
@@ -91,7 +86,10 @@ export default function Post({ post }: { post: PostProps }) {
   return (
     <View style={styles.post}>
       <View style={styles.postHeader}>
-        <Link href={"/(tabs)/notifications"}>
+        <Link
+          href={isPostOwner ? "/(tabs)/profile" : `/user/${post.author._id}`}
+          asChild
+        >
           <TouchableOpacity style={styles.postHeaderLeft}>
             <Image
               source={post.author.image}
@@ -144,8 +142,8 @@ export default function Post({ post }: { post: PostProps }) {
       {/* POST INFO */}
       <View style={styles.postInfo}>
         <Text style={styles.likesText}>
-          {likesCount > 0
-            ? `${likesCount.toLocaleString()} likes`
+          {post.likes > 0
+            ? `${post.likes.toLocaleString()} likes`
             : "Be the first to like"}
         </Text>
         {post.caption && (
@@ -157,7 +155,7 @@ export default function Post({ post }: { post: PostProps }) {
 
         <TouchableOpacity onPress={() => setShowComments(true)}>
           <Text style={styles.commentsText}>
-            View all {commentsCount} comments
+            View all {post.comments} comments
           </Text>
         </TouchableOpacity>
 
@@ -170,7 +168,6 @@ export default function Post({ post }: { post: PostProps }) {
         postId={post._id}
         visible={showComments}
         onClose={() => setShowComments(false)}
-        onCommentAdded={() => setCommentsCount((prev) => prev + 1)}
       />
     </View>
   );

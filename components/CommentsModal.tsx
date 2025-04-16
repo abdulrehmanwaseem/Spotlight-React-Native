@@ -23,14 +23,12 @@ type CommentsModalType = {
   postId: Id<"posts">;
   visible: boolean;
   onClose: () => void;
-  onCommentAdded: () => void;
 };
 
 export default function CommentsModal({
   postId,
   visible,
   onClose,
-  onCommentAdded,
 }: CommentsModalType) {
   const [newComment, setNewComment] = useState("");
   const [isPosting, setIsPosting] = useState(false);
@@ -50,7 +48,6 @@ export default function CommentsModal({
       });
 
       setNewComment("");
-      onCommentAdded();
     } catch (error) {
       console.log("Error adding comment:", error);
     } finally {

@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import { Image } from "expo-image";
 
-const SelectedImageModal = ({ selectedPost, setSelectedPost }: any) => {
+const SelectedPostModal = ({ selectedPost, setSelectedPost }: any) => {
   return (
     <Modal
       visible={!!selectedPost}
@@ -23,7 +23,7 @@ const SelectedImageModal = ({ selectedPost, setSelectedPost }: any) => {
             </View>
 
             <Image
-              source={selectedPost.imageUrl}
+              source={selectedPost}
               cachePolicy={"memory-disk"}
               style={styles.postDetailImage}
             />
@@ -34,4 +34,4 @@ const SelectedImageModal = ({ selectedPost, setSelectedPost }: any) => {
   );
 };
 
-export default SelectedImageModal;
+export default SelectedPostModal;
