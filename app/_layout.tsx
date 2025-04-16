@@ -8,7 +8,10 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import InitialLayout from "../components/initialLayout";
 import { useFonts } from "expo-font";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import * as NavigationBar from "expo-navigation-bar";
+import { Platform } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,6 +23,14 @@ export default function RootLayout() {
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded]);
+
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      NavigationBar.setBackgroundColorAsync(COLORS.background);
+      NavigationBar.setButtonStyleAsync("light");
+    }
+  }, []);
+
   return (
     <ClerkAndConvexProvider>
       <SafeAreaProvider>
@@ -31,6 +42,7 @@ export default function RootLayout() {
           <Toast config={toastConfig} />
         </SafeAreaView>
       </SafeAreaProvider>
+      <StatusBar style="light" />
     </ClerkAndConvexProvider>
   );
 }
