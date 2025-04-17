@@ -1,24 +1,63 @@
 import Loader from "@/components/Loader";
+import NoDataFound from "@/components/NoDataFound";
 import Post from "@/components/Post";
 import Story from "@/components/Story";
-import { STORIES } from "@/constants/mock-data";
 import { COLORS } from "@/constants/theme";
 import { api } from "@/convex/_generated/api";
 import { styles } from "@/styles/feed.styles";
-import { useAuth } from "@clerk/clerk-expo";
+import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
+import { Image } from "expo-image";
+import { useEffect, useState } from "react";
 import {
   FlatList,
+  RefreshControl,
   Text,
   TouchableOpacity,
   View,
-  ScrollView,
-  RefreshControl,
+  ActivityIndicator,
+  StyleSheet,
 } from "react-native";
-import NoDataFound from "@/components/NoDataFound";
-import { useState, useEffect } from "react";
-import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
+import { AntDesign } from "@expo/vector-icons";
+import { uploadImage } from "@/lib/uploadImage";
+import { Id } from "@/convex/_generated/dataModel";
+import Toast from "react-native-toast-message";
+
+// Update the type definition to match the actual structure
+type StoryItem =
+  | {
+      _id: Id<"stories">;
+      userId: string;
+      imageUrl: string;
+      storageId: Id<"_storage">;
+      user: {
+        _id: string;
+        username: string;
+        image?: string;
+        fullName: string;
+        email: string;
+        followers: number;
+        following: number;
+        posts: number;
+        clerkId: string;
+      } | null;
+      createdAt: number;
+      expiresAt: number;
+    }
+  | {
+      isAddStory: true;
+    };
+
+const storyStyles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+
 export default function Index() {
   const { signOut } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
@@ -82,11 +121,115 @@ export default function Index() {
 }
 
 const StoriesSection = () => {
+  const stories = useQuery(api.stories.getStories);
+  const createStory = useMutation(api.stories.createStory);
+  const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
+  const { user } = useUser();
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleAddStory = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [9, 16],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setIsUploading(true);
+        try {
+          const { storageId, url } = await uploadImage(
+            result.assets[0].uri,
+            generateUploadUrl
+          );
+
+          try {
+            await createStory({ imageUrl: url, storageId });
+          } catch (storyError) {
+            // Handle the specific error from createStory
+            console.error("Story creation error:", storyError);
+
+            let errorMessage = "Failed to create story";
+            if (storyError instanceof Error) {
+              if (
+                storyError.message.includes("You already have an active story")
+              ) {
+                errorMessage =
+                  "You already have an active story. Please delete it first.";
+              } else {
+                errorMessage = storyError.message;
+              }
+            }
+
+            Toast.show({
+              type: "error",
+              text1: "Story Error",
+              text2: errorMessage,
+              position: "bottom",
+              visibilityTime: 3000,
+            });
+          }
+        } catch (uploadError) {
+          console.error("Upload error:", uploadError);
+          Toast.show({
+            type: "error",
+            text1: "Upload Error",
+            text2: "Failed to upload image. Please try again.",
+            position: "bottom",
+            visibilityTime: 3000,
+          });
+        } finally {
+          setIsUploading(false);
+        }
+      }
+    } catch (error) {
+      console.error("Image picker error:", error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to select image. Please try again.",
+        position: "bottom",
+        visibilityTime: 3000,
+      });
+    }
+  };
+
+  if (!stories) return null;
+
+  const storyItems: StoryItem[] = [{ isAddStory: true }, ...stories];
+
   return (
     <FlatList
-      data={STORIES}
-      renderItem={({ item }) => <Story story={item} />}
-      keyExtractor={(item) => item.id}
+      data={storyItems}
+      renderItem={({ item }) => {
+        if ("isAddStory" in item) {
+          return (
+            <TouchableOpacity
+              style={styles.storyWrapper}
+              onPress={handleAddStory}
+              disabled={isUploading}
+            >
+              <View style={[styles.storyRing, styles.noStory]}>
+                {isUploading ? (
+                  <View style={storyStyles.loaderContainer}>
+                    <ActivityIndicator color={COLORS.primary} size="small" />
+                  </View>
+                ) : (
+                  <View style={styles.addStoryIconContainer}>
+                    <AntDesign name="plus" size={24} color={COLORS.primary} />
+                  </View>
+                )}
+              </View>
+              <Text style={styles.storyUsername}>
+                {isUploading ? "Uploading..." : "Add Story"}
+              </Text>
+            </TouchableOpacity>
+          );
+        }
+        return <Story story={item} />;
+      }}
+      keyExtractor={(item) => ("isAddStory" in item ? "add-story" : item._id)}
       horizontal
       showsHorizontalScrollIndicator={false}
       style={styles.storiesContainer}

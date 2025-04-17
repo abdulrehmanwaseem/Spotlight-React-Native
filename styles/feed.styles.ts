@@ -45,6 +45,12 @@ export const styles = StyleSheet.create({
   noStory: {
     borderColor: COLORS.grey,
   },
+  addStoryIconContainer: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   storyAvatar: {
     width: 60,
     height: 60,

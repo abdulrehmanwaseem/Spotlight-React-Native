@@ -12,6 +12,7 @@ import { useCallback, useEffect } from "react";
 import * as NavigationBar from "expo-navigation-bar";
 import { Platform } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { StoryProvider } from "@/components/StoryProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,16 +34,18 @@ export default function RootLayout() {
 
   return (
     <ClerkAndConvexProvider>
-      <SafeAreaProvider>
-        <SafeAreaView
-          style={{ flex: 1, backgroundColor: COLORS.background }}
-          onLayout={onLayoutRootView}
-        >
-          <InitialLayout />
-          <Toast config={toastConfig} />
-        </SafeAreaView>
-      </SafeAreaProvider>
-      <StatusBar style="light" />
+      <StoryProvider>
+        <SafeAreaProvider>
+          <SafeAreaView
+            style={{ flex: 1, backgroundColor: COLORS.background }}
+            onLayout={onLayoutRootView}
+          >
+            <InitialLayout />
+            <Toast config={toastConfig} />
+          </SafeAreaView>
+        </SafeAreaProvider>
+        <StatusBar style="light" />
+      </StoryProvider>
     </ClerkAndConvexProvider>
   );
 }
