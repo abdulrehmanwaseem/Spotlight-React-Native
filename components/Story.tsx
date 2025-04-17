@@ -1,6 +1,7 @@
 import { styles } from "@/styles/feed.styles";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
+import { memo } from "react";
 
 type Story = {
   id: string;
@@ -9,7 +10,7 @@ type Story = {
   hasStory: boolean;
 };
 
-export default function Story({ story }: { story: Story }) {
+function Story({ story }: { story: Story }) {
   return (
     <TouchableOpacity style={styles.storyWrapper}>
       <View style={[styles.storyRing, !story.hasStory && styles.noStory]}>
@@ -24,3 +25,5 @@ export default function Story({ story }: { story: Story }) {
     </TouchableOpacity>
   );
 }
+
+export default memo(Story);

@@ -85,6 +85,12 @@ export const styles = StyleSheet.create({
     width: width,
     height: width,
   },
+  imageLoadingContainer: {
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: COLORS.surface,
+  },
   postActions: {
     flexDirection: "row",
     justifyContent: "space-between",

@@ -111,6 +111,7 @@ export default function Post({ post }: { post: PostProps }) {
         contentFit="cover"
         transition={200}
         cachePolicy={"memory-disk"}
+        priority="high"
       />
       {/* POST ACTIONS */}
       <View style={styles.postActions}>

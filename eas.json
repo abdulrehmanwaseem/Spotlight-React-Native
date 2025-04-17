@@ -6,15 +6,7 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "android": {
-        "gradleCommand": ":app:assembleDebug"
-      },
-      "env": {
-        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_cHJvbW90ZWQtaG9nLTM2LmNsZXJrLmFjY291bnRzLmRldiQ",
-        "EXPO_PUBLIC_CONVEX_URL": "https://clever-pig-730.convex.cloud",
-        "CONVEX_DEPLOYMENT": "dev:clever-pig-730"
-      }
+      "distribution": "internal"
     },
     "preview": {
       "distribution": "internal",
@@ -31,11 +23,6 @@
       "autoIncrement": true,
       "android": {
         "buildType": "app-bundle"
-      },
-      "env": {
-        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_cHJvbW90ZWQtaG9nLTM2LmNsZXJrLmFjY291bnRzLmRldiQ",
-        "EXPO_PUBLIC_CONVEX_URL": "https://clever-pig-730.convex.cloud",
-        "CONVEX_DEPLOYMENT": "dev:clever-pig-730"
       }
     }
   },

@@ -1,5 +1,5 @@
 {
-  "name": "spotlight-app",
+  "name": "spotlight",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "description": "SpotLight - A social media app built with React Native and Expo",

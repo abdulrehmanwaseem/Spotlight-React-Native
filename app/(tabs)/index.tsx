@@ -17,12 +17,24 @@ import {
   RefreshControl,
 } from "react-native";
 import NoDataFound from "@/components/NoDataFound";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Image } from "expo-image";
 export default function Index() {
   const { signOut } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
 
   const posts = useQuery(api.posts.getFeedPosts);
+
+  // Prefetch post images when feed loads
+  useEffect(() => {
+    if (posts && posts.length > 0) {
+      // Prefetch first 5 post images
+      const imagesToPrefetch = posts.slice(0, 5).map((post) => post.imageUrl);
+      imagesToPrefetch.forEach((imageUrl) => {
+        Image.prefetch(imageUrl);
+      });
+    }
+  }, [posts]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -51,6 +63,11 @@ export default function Index() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 50 }}
         ListHeaderComponent={<StoriesSection />}
+        initialNumToRender={3}
+        maxToRenderPerBatch={3}
+        windowSize={5}
+        removeClippedSubviews={true}
+        updateCellsBatchingPeriod={50}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -58,6 +75,7 @@ export default function Index() {
             tintColor={COLORS.primary}
           />
         }
+        onEndReachedThreshold={0.5}
       />
     </View>
   );
