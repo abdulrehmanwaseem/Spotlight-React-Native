@@ -49,7 +49,7 @@ export const createStory = mutation({
     imageUrl: v.string(),
     storageId: v.id("_storage"),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<Id<"stories">> => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
@@ -76,7 +76,6 @@ export const createStory = mutation({
         "You already have an active story. Please delete it first."
       );
     }
-
     // Create the story
     const storyId = await ctx.db.insert("stories", {
       userId: user._id,

@@ -64,7 +64,6 @@ export default function Index() {
 
   const posts = useQuery(api.posts.getFeedPosts);
 
-  // Prefetch post images when feed loads
   useEffect(() => {
     if (posts && posts.length > 0) {
       // Prefetch first 5 post images
@@ -124,7 +123,6 @@ const StoriesSection = () => {
   const stories = useQuery(api.stories.getStories);
   const createStory = useMutation(api.stories.createStory);
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
-  const { user } = useUser();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleAddStory = async () => {
@@ -148,7 +146,7 @@ const StoriesSection = () => {
             await createStory({ imageUrl: url, storageId });
           } catch (storyError) {
             // Handle the specific error from createStory
-            console.error("Story creation error:", storyError);
+            console.error("Story creation error: *********", storyError);
 
             let errorMessage = "Failed to create story";
             if (storyError instanceof Error) {
