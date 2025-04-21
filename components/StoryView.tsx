@@ -157,6 +157,26 @@ export default function StoryView({
         )}
       </Pressable>
 
+      <View style={styles.userInfoContainer}>
+        {story?.user?.image ? (
+          <Image
+            source={story.user.image}
+            style={styles.userAvatar}
+            contentFit="cover"
+          />
+        ) : (
+          <View style={[styles.userAvatar, styles.defaultAvatar]}>
+            <Text style={styles.defaultAvatarText}>
+              {story?.user?.username?.charAt(0).toUpperCase() || "U"}
+            </Text>
+          </View>
+        )}
+        <View style={styles.userTextContainer}>
+          <Text style={styles.username}>{story?.user?.username}</Text>
+          <Text style={styles.fullName}>{story?.user?.fullName}</Text>
+        </View>
+      </View>
+
       <TouchableOpacity style={styles.closeButton} onPress={onClose}>
         <AntDesign name="close" size={24} color="white" />
       </TouchableOpacity>
@@ -204,9 +224,48 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
   },
+  userInfoContainer: {
+    position: "absolute",
+    top: 10,
+    left: 20,
+    zIndex: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 20,
+    padding: 8,
+  },
+  userAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 8,
+  },
+  defaultAvatar: {
+    backgroundColor: COLORS.primary,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  defaultAvatarText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  userTextContainer: {
+    flexDirection: "column",
+  },
+  username: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  fullName: {
+    color: "rgba(255,255,255,0.8)",
+    fontSize: 12,
+  },
   closeButton: {
     position: "absolute",
-    top: 40,
+    top: 20,
     right: 20,
     zIndex: 2,
   },
