@@ -15,6 +15,7 @@ import { COLORS } from "@/constants/theme";
 import { useUser } from "@clerk/clerk-expo";
 import { Image } from "expo-image";
 import { Id } from "@/convex/_generated/dataModel";
+import { Link } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 
@@ -157,25 +158,27 @@ export default function StoryView({
         )}
       </Pressable>
 
-      <View style={styles.userInfoContainer}>
-        {story?.user?.image ? (
-          <Image
-            source={story.user.image}
-            style={styles.userAvatar}
-            contentFit="cover"
-          />
-        ) : (
-          <View style={[styles.userAvatar, styles.defaultAvatar]}>
-            <Text style={styles.defaultAvatarText}>
-              {story?.user?.username?.charAt(0).toUpperCase() || "U"}
-            </Text>
+      <Link href={`/user/${story?.user?._id}`} asChild>
+        <TouchableOpacity style={styles.userInfoContainer} onPress={onClose}>
+          {story?.user?.image ? (
+            <Image
+              source={story.user.image}
+              style={styles.userAvatar}
+              contentFit="cover"
+            />
+          ) : (
+            <View style={[styles.userAvatar, styles.defaultAvatar]}>
+              <Text style={styles.defaultAvatarText}>
+                {story?.user?.username?.charAt(0).toUpperCase() || "U"}
+              </Text>
+            </View>
+          )}
+          <View style={styles.userTextContainer}>
+            <Text style={styles.username}>{story?.user?.username}</Text>
+            <Text style={styles.fullName}>{story?.user?.fullName}</Text>
           </View>
-        )}
-        <View style={styles.userTextContainer}>
-          <Text style={styles.username}>{story?.user?.username}</Text>
-          <Text style={styles.fullName}>{story?.user?.fullName}</Text>
-        </View>
-      </View>
+        </TouchableOpacity>
+      </Link>
 
       <TouchableOpacity style={styles.closeButton} onPress={onClose}>
         <AntDesign name="close" size={24} color="white" />
@@ -265,7 +268,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: 20,
+    top: 25,
     right: 20,
     zIndex: 2,
   },
