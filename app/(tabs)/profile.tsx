@@ -23,10 +23,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import NoDataFound from "@/components/NoDataFound";
 import SelectedPostModal from "@/components/SelectedPostModal";
+import FollowersListModal from "@/components/FollowersListModal";
 
 export default function Profile() {
   const { signOut, userId } = useAuth();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isFollowersModalVisible, setIsFollowersModalVisible] = useState(false);
+  const [isFollowingModalVisible, setIsFollowingModalVisible] = useState(false);
   const currentUser = useQuery(
     api.users.getUserByClerkId,
     userId ? { clerkId: userId } : "skip"
@@ -48,6 +51,14 @@ export default function Profile() {
 
   const [selectedPost, setSelectedPost] = useState<string | null>(null);
   const posts = useQuery(api.posts.getPostsByUserId, {});
+  const followers = useQuery(
+    api.users.getFollowers,
+    currentUser ? { userId: currentUser._id } : "skip"
+  );
+  const following = useQuery(
+    api.users.getFollowing,
+    currentUser ? { userId: currentUser._id } : "skip"
+  );
 
   const updateProfile = useMutation(api.users.updateUser);
 
@@ -60,7 +71,13 @@ export default function Profile() {
     }
   };
 
-  if (!currentUser || posts === undefined) return <Loader />;
+  if (
+    !currentUser ||
+    posts === undefined ||
+    followers === undefined ||
+    following === undefined
+  )
+    return <Loader />;
 
   return (
     <View style={styles.container}>
@@ -95,14 +112,20 @@ export default function Profile() {
                 <Text style={styles.statNumber}>{currentUser.posts}</Text>
                 <Text style={styles.statLabel}>Posts</Text>
               </View>
-              <View style={styles.statItem}>
+              <TouchableOpacity
+                style={styles.statItem}
+                onPress={() => setIsFollowersModalVisible(true)}
+              >
                 <Text style={styles.statNumber}>{currentUser.followers}</Text>
                 <Text style={styles.statLabel}>Followers</Text>
-              </View>
-              <View style={styles.statItem}>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.statItem}
+                onPress={() => setIsFollowingModalVisible(true)}
+              >
                 <Text style={styles.statNumber}>{currentUser.following}</Text>
                 <Text style={styles.statLabel}>Following</Text>
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -224,6 +247,22 @@ export default function Profile() {
           </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
       </Modal>
+
+      {/* Followers List Modal */}
+      <FollowersListModal
+        visible={isFollowersModalVisible}
+        onClose={() => setIsFollowersModalVisible(false)}
+        users={followers}
+        title="Followers"
+      />
+
+      {/* Following List Modal */}
+      <FollowersListModal
+        visible={isFollowingModalVisible}
+        onClose={() => setIsFollowingModalVisible(false)}
+        users={following}
+        title="Following"
+      />
     </View>
   );
 }
