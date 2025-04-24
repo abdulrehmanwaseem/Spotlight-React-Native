@@ -156,3 +156,45 @@ async function updateFollowCounts(
     });
   }
 }
+
+export const getFollowers = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const follows = await ctx.db
+      .query("follows")
+      .withIndex("by_following", (q) => q.eq("followingId", args.userId))
+      .collect();
+
+    const followers = await Promise.all(
+      follows.map(async (follow) => {
+        const user = await ctx.db.get(follow.followerId);
+        return user;
+      })
+    );
+
+    return followers.filter(
+      (user): user is NonNullable<typeof user> => user !== null
+    );
+  },
+});
+
+export const getFollowing = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const follows = await ctx.db
+      .query("follows")
+      .withIndex("by_follower", (q) => q.eq("followerId", args.userId))
+      .collect();
+
+    const following = await Promise.all(
+      follows.map(async (follow) => {
+        const user = await ctx.db.get(follow.followingId);
+        return user;
+      })
+    );
+
+    return following.filter(
+      (user): user is NonNullable<typeof user> => user !== null
+    );
+  },
+});
