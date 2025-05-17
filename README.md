@@ -5,8 +5,8 @@ Spotlight is a modern social media app built with **React Native** and **Expo**,
 <!-- First row -->
 <p align="center">
   <img src="https://github.com/user-attachments/assets/79337920-2b7d-48eb-881c-4d4f11e36b09" width="30%" />
-  <img src="https://github.com/user-attachments/assets/67bc16c9-87eb-44f5-ad7c-c33843d6f811" width="30%" />
-  <img src="https://github.com/user-attachments/assets/1e88528b-f133-48f6-a94a-e052cd0e0538" width="30%" />
+  <img src="https://github.com/user-attachments/assets/69115445-0058-46b5-bd16-6464e5ace56d" width="30%" />
+  <img src="https://github.com/user-attachments/assets/dde36a32-792e-4754-89ff-1f4fcee960fa" width="30%" />
 </p>
 
 <!-- Second row -->
